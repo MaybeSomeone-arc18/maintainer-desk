@@ -1,0 +1,243 @@
+{
+  "id": "mdtriage0001",
+  "name": "Maintainer Desk - issue triage",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "maintainer-desk-issue",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "n1",
+      "name": "GitHub issue webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "md-issue"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst body = $input.first().json.body || $input.first().json;\nconst issue = body.issue || {};\nconst repo = (body.repository && body.repository.full_name) || '';\nconst action = body.action || '';\nif (!['opened','edited','reopened'].includes(action) || !issue.number || !repo) {\n  return [{json:{skip:true, reason:'not an issue opened/edited/reopened event or missing fields'}}];\n}\nconst text = ((issue.title||'')+' '+(issue.body||'')).toLowerCase();\nconst stop = new Set('the a an and or of to in on for with is it this that be are was not no when i my we you can cant cannot how do does did from as at by if have has had but so than then them there their what which will would should could also just get got use using used'.split(' '));\nconst tokens = [...new Set(text.replace(/[^a-z0-9_\\s-]/g,' ').split(/\\s+/).filter(w=>w.length>2 && !stop.has(w)))];\nconst bodyText = (issue.body||'');\nconst hasRepro = /(steps to reproduce|reproduce|repro|expected|actual|\\bversion\\b|stack ?trace|error:|traceback)/i.test(bodyText);\nconst hasCommand = /```|\\$ |npm |pip |python |node |curl /i.test(bodyText);\nreturn [{json:{repo, number:issue.number, title:issue.title||'', body:bodyText, author:(issue.user&&issue.user.login)||'', url:issue.html_url||'', tokens, hasRepro, hasCommand,\n  query: tokens.slice(0,6).join(' ')}}];"
+      },
+      "id": "n2",
+      "name": "Normalize issue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n3",
+      "name": "Skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ ($env.GITHUB_API_BASE || 'https://api.github.com') + '/search/issues' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ \"repo:\" + $json.repo + \" is:issue \" + $json.query }}"
+            },
+            {
+              "name": "per_page",
+              "value": "10"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "maintainer-desk"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n4",
+      "name": "Search related issues",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst me = $('Normalize issue').first().json;\nconst items = ($input.first().json.items || []).filter(i=>i.number!==me.number && !i.pull_request);\nconst tk = s => new Set((s||'').toLowerCase().replace(/[^a-z0-9_\\s-]/g,' ').split(/\\s+/).filter(w=>w.length>2));\nconst jac = (A,B)=>{ let n=0; for (const w of A) if (B.has(w)) n++; const u=new Set([...A,...B]).size||1; return n/u; };\nconst myAll = new Set(me.tokens), myTitle = tk(me.title);\nconst scored = items.map(i=>{\n  const tAll = tk((i.title||'')+' '+(i.body||'')), tTitle = tk(i.title);\n  const score = 0.6*jac(myTitle,tTitle) + 0.4*jac(myAll,tAll);\n  return {number:i.number, title:i.title, url:i.html_url, state:i.state, score:Math.round(score*100)/100, shared:[...myAll].filter(w=>tAll.has(w)).slice(0,8)};\n}).sort((a,b)=>b.score-a.score).slice(0,3);\nreturn [{json:{...me, candidates:scored}}];"
+      },
+      "id": "n5",
+      "name": "Rank related issues",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst d = $input.first().json;\nconst top = d.candidates[0];\nconst missing = [];\nif (!d.hasRepro) missing.push('reproduction steps / expected vs actual / version');\nif (!d.hasCommand) missing.push('the exact failing command or code');\nlet rec, conf;\nif (top && top.score >= 0.3) { rec = 'Possible duplicate of #'+top.number+'. Ask the reporter to confirm and link it before closing.'; conf = top.score>=0.5?'medium':'low'; }\nelse if (missing.length) { rec = 'Request missing details before labeling: '+missing.join('; ')+'.'; conf='medium'; }\nelse { rec = 'No close match found. Label for maintainer review.'; conf='low'; }\nconst draft = missing.length ? 'Thanks for the report! Could you add '+missing.join(' and ')+'? That will help us reproduce it.' : (top&&top.score>=0.3 ? 'Thanks! This looks related to #'+top.number+'. Does that cover your case?' : 'Thanks for the report, a maintainer will take a look.');\nreturn [{json:{status:'needs_human_review', issue:{repo:d.repo, number:d.number, title:d.title, url:d.url}, recommendation:rec, confidence:conf, evidence:d.candidates, missing_details:missing, suggested_reply:draft, note:'Heuristic card: keyword-overlap ranking, no LLM. Nothing is posted to GitHub; write-back after approval is not built yet.'}}];"
+      },
+      "id": "n6",
+      "name": "Build triage card",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "n7",
+      "name": "Return card for review",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: \"ignored\", reason: $json.reason } }}",
+        "options": {}
+      },
+      "id": "n8",
+      "name": "Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        -120
+      ]
+    }
+  ],
+  "connections": {
+    "GitHub issue webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize issue": {
+      "main": [
+        [
+          {
+            "node": "Skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip?": {
+      "main": [
+        [
+          {
+            "node": "Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search related issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search related issues": {
+      "main": [
+        [
+          {
+            "node": "Rank related issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rank related issues": {
+      "main": [
+        [
+          {
+            "node": "Build triage card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build triage card": {
+      "main": [
+        [
+          {
+            "node": "Return card for review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
