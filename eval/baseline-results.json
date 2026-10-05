@@ -1,0 +1,314 @@
+{
+  "summary": {
+    "repo": "n8n-io/n8n",
+    "date": "2026-10-05",
+    "pairs": 30,
+    "original_in_search_results": 2,
+    "top1": 1,
+    "top3": 1,
+    "flagged_as_duplicate_at_0_3": 8,
+    "flagged_and_correct": 1
+  },
+  "rows": [
+    {
+      "dup": 36095,
+      "orig": 35899,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.2,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 35852,
+      "orig": 35788,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.05,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 35826,
+      "orig": 35783,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.14,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 34539,
+      "orig": 34321,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.17,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 33870,
+      "orig": 32250,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 30879,
+      "orig": 30734,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 30170,
+      "orig": 30088,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.48,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 30031,
+      "orig": 29471,
+      "inSearchPool": true,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.6,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29990,
+      "orig": 29471,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.88,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29862,
+      "orig": 29471,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.05,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29859,
+      "orig": 29471,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29855,
+      "orig": 29471,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.31,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29851,
+      "orig": 29471,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.12,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29849,
+      "orig": 28842,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29775,
+      "orig": 28922,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29769,
+      "orig": 28842,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.2,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29735,
+      "orig": 28842,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29661,
+      "orig": 29119,
+      "inSearchPool": true,
+      "top1": true,
+      "top3": true,
+      "topScore": 0.35,
+      "flagged": true,
+      "flaggedCorrect": true
+    },
+    {
+      "dup": 29365,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.14,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29284,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.28,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29228,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.95,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29160,
+      "orig": 28541,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29120,
+      "orig": 28922,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.26,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29118,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29032,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.06,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 29008,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.43,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 28980,
+      "orig": 28514,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.77,
+      "flagged": true,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 28952,
+      "orig": 28994,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 28946,
+      "orig": 28842,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0,
+      "flagged": false,
+      "flaggedCorrect": false
+    },
+    {
+      "dup": 28941,
+      "orig": 27268,
+      "inSearchPool": false,
+      "top1": false,
+      "top3": false,
+      "topScore": 0.17,
+      "flagged": false,
+      "flaggedCorrect": false
+    }
+  ]
+}
