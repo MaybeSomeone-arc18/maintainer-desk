@@ -1,22 +1,41 @@
 # Maintainer Desk
 
-A working front-end prototype for Hack Sprint's AI Automation with n8n track, by Scrap Builders. Open `index.html` in any modern browser. No build, install, credentials or external service are needed.
+Triage help for open-source maintainers, by Scrap Builders for Hack Sprint's AI Automation with n8n track. It has two parts: a working n8n workflow, and a front-end review screen.
 
 ## What works now
 
+### 1. n8n workflow (`workflows/maintainer-desk-triage.workflow.json`)
+
+Import it into n8n (Workflows > Import from file), publish it, and POST a GitHub `issues` webhook payload to `/webhook/maintainer-desk-issue`.
+
+Flow: webhook -> normalize and validate the event -> search related issues with the GitHub search API -> rank them by keyword overlap -> build a triage card -> return the card for human review.
+
+The card has a recommendation, confidence, up to 3 related issues with scores, missing details (repro steps, version, failing command) and a suggested reply. Events that are not opened/edited/reopened issues are ignored.
+
+Nothing is posted back to GitHub. A maintainer decides.
+
+Tested locally in n8n 2.35 on 4 payloads:
+- possible duplicate (against a mock GitHub search API)
+- no close match (mock)
+- non-issue event, ignored (mock)
+- made-up issue in a public repo against the live GitHub search API: returned a missing-details card with 3 related issues
+
+GitHub search is unauthenticated by default, so it is rate limited. Set `GITHUB_API_BASE` to point the workflow at another API host (used for the mock tests).
+
+### 2. Review screen (`index.html`)
+
+Open `index.html` in a browser. No build or install.
+
 - Three clearly labeled **sample** issues can be selected in the queue.
 - Each shows a written triage rationale, context to check and an editable suggested reply.
-- The draft can be reset, and an issue can be marked reviewed **in the current browser session only**. Nothing is sent to GitHub.
-- The layout adapts to narrower screens.
+- The draft can be reset, and an issue can be marked reviewed in the current browser session only.
 
-The sample issues, explanations and suggested replies are authored fixture content. They are not results from a live model, retrieval system, or GitHub repository.
+The sample issues and replies are authored fixtures. The screen is not connected to the workflow yet.
 
-## Proposed next build
+## Not built yet
 
-1. Use a GitHub issue webhook as the n8n trigger; validate and normalize event fields.
-2. Fetch related issues and project documentation through an authenticated service, then rank candidate context.
-3. Draft a recommendation with linked evidence, surface it for human review, and keep all public write actions behind approval.
-4. After approval, have n8n post the edited reply or apply a label with an audit trail.
-5. Test on seeded issues before claiming accuracy or time savings.
-
-This repository currently contains **only a front-end prototype**. It does not include an n8n workflow, API integration, model inference, real issue ingestion, measured results, or live automation. The round-two deck's architecture and data-flow diagram describe the intended system, not completed functionality.
+- LLM reasoning step (the ranking today is keyword overlap, so paraphrased duplicates can be missed or ranked low)
+- Documentation retrieval
+- Approved write-back (n8n posting the edited comment or label)
+- Connecting the review screen to the workflow output
+- Measured accuracy or time savings. No such numbers exist yet.
